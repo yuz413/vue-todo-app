@@ -4,63 +4,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <title>Vue Todo</title>
 </head>
 
 <body>
     <div id="app">
         <h1>Todo App</h1>
+        <!-- v- 는 동적바인딩 가능하게 해줌 -->
+        <span v-bind:title='message'>
+            내 위에 마우스를 올려봐
+        </span>
+        <br />
+        <br />
         <input type='text' v-model='inputText' v-on:keyup.enter='addItem' />
         <button v-on:click='addItem'>Add</button>
         <button v-on:click='fetchItems'>Fetch</button>
+
+        <!-- 
+            v-for 는 key 와 항상 함께 사용
+            <li
+                v-for="todo in todos"
+                :key="todo:id"
+            >
+                {{todo.text}}
+            </li>
+        -->
         <ul>
             <li v-for="(item, index) in todoItems">
                 {{ item }}
                 <button v-on:click='removeItem(item, index)'>remove</button>
             </li>
         </ul>
+
+        <!--
+        이제 각 todo-item 에 todo 객체를 제공합니다.
+        화면에 나오므로, 각 항목의 컨텐츠는 동적으로 바뀔 수 있습니다.
+        또한 각 구성 요소에 "키"를 제공해야합니다 (나중에 설명 됨).
+        -->
+        <h2>Local Storage</h2>
+        <ul>
+            <todo-item v-for="(item, index) in fullList" v-bind:todo="item" v-bind:key="index">
+            </todo-item>
+        </ul>
+
+
+
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
-    <script>
-        new Vue({
-            created: function () {   // 인스턴스가 생성되었을 때, 그 안의 코드가 생성돼
-                this.fetchItems();
-            },
-            el: '#app',
-            data: {
-                inputText: '',   // 초기화 값
-                todoItems: [],
-            },
-            methods: {
-                addItem: function (event) { // 사용자가 친 것을 localStorage에 저장(추가)
-                    //if (event.keyCode === 13) { // 엔터를 눌렀을 때, Add 버튼과 같은 기능을 함
-                    console.log(event)
-                    var value = this.inputText
-                    localStorage.setItem(value, value) // setItem 은 key, value 형식
-                    this.inputText = ''; // add 누른 후에 빈칸으로 만들기
-                    this.todoItems.push(value)
-                    //}
-                },
-                fetchItems: function () {    // localStorage에 저장된 걸 조회
-                    // axios.get('/todos')
-                    for (var i = 0; i < localStorage.length; i++) {
-                        var value = localStorage.key(i)
-                        console.log(value);
-                        this.todoItems.push(value);
-                    }
-                },
-                removeItem: function (item, index) {   // 특정 아이템 선택했을 때 지우기
-                    // axios.delete('todos/' + index)
-                    console.log(item, index);
-                    this.todoItems.splice(index, 1)     // 배열에 있는 index 값 1개 지우기 (slice, splice 차이점 알아!!)
-                    localStorage.removeItem(item)       // localStorage에 있는 것 지우기
-                }
-
-            }
-        })
-    </script>
+    <script src="index.js"></script>
 </body>
 
 </html>
